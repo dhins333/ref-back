@@ -6,9 +6,12 @@ const jwt = require('jsonwebtoken');
 const auth = require('../auth/auth');
 const multer = require('multer');
 const upload = multer({dest:path.join(__dirname,'..','..','public','img')})
+const storage = multer.memoryStorage();
+const upload2 = multer({storage:storage})
 const sharp = require('sharp');
 const router = new express.Router();
 const Folder = require('../models/folders');
+const Files = require('../models/files');
 const fs = require('fs');
 
 router.post('/admin',async (req,res) => {
@@ -60,5 +63,32 @@ router.post('/admin/folder',auth,upload.single('logo'),async (req,res) => {
     }
 
 })
+
+router.get('/admin/folders',auth,async(req,res) => {
+
+    try{
+        const data = await Folder.find({});
+        res.send(JSON.stringify(data));
+    }catch(e){
+        res.status(500).send(e)
+    }
+
+})
+
+router.post('/createfile',auth,upload2.single('data'),async(req,res) => {
+    try{
+        const file = new Files({
+            fileName:req.file.originalname,
+            data:req.file.buffer,
+            own_folder:req.body.own_folder
+        })
+        await file.save();
+        res.send('File Saved');
+    }catch(e){
+        console.log(e);
+        res.status(500).send(e)
+    }
+})
+
 
 module.exports = router;

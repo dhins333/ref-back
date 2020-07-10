@@ -39,8 +39,9 @@ router.get('/api/folders/:id',async (req,res) => {
 
 router.get('/api/files/:id/data' , async (req,res) => {
     try{
-        const fileData = await Files.findById(req.params.id).select({data:1});
-        const data = {data:fileData.data.toString()};
+        const fileData = await Files.findById(req.params.id).select({data:1,language:1});
+        const data = {data:fileData.data.toString(),lang:fileData.hasOwnProperty('language') ? fileData.language : 'javascript'};
+        console.log(data)
         res.send(JSON.stringify(data));
     }catch(e){
         console.log(e);

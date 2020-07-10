@@ -13,6 +13,9 @@ const Files = mongoose.model('Files',{
     data:{
         type:Buffer,
         required:true
+    }, 
+    language:{
+        type:String
     }
 })
 

@@ -81,8 +81,9 @@ router.post('/createfile',auth,upload2.single('data'),async(req,res) => {
             fileName:req.file.originalname,
             data:req.file.buffer,
             own_folder:req.body.own_folder,
-            language: req.body.hasOwnProperty('language') ? req.body.language : 'javascript'
+            language: req.body.language != undefined ? req.body.language : 'javascript'
         })
+        
         await file.save();
         res.send('File Saved');
     }catch(e){

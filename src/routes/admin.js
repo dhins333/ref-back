@@ -1,14 +1,11 @@
 const express = require('express');
-const path = require('path');
 const Admin = require('../models/admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const auth = require('../auth/auth');
 const multer = require('multer');
-const upload = multer({dest:path.join(__dirname,'..','..','public','img')})
 const storage = multer.memoryStorage();
 const upload2 = multer({storage:storage})
-const sharp = require('sharp');
 const router = new express.Router();
 const Folder = require('../models/folders');
 const Files = require('../models/files');
@@ -39,16 +36,11 @@ router.post('/admin',async (req,res) => {
     }
 })
 
-router.post('/admin/folder',auth,upload.single('logo'),async (req,res) => {
+router.post('/admin/folder',async (req,res) => {
     try{
-        const newLogoName = path.join(__dirname,'..','..','public','img',`resized${req.file.filename}.png`);
-        await sharp(req.file.path)
-        .resize(800,600,{fit:'fill'})
-        .toFile(newLogoName);
-
         const folder = new Folder({
             folderName:req.body.folderName,
-            logo:`resized${req.file.filename}.png`
+            logo:req.body.logo_url
         });
 
         await folder.save();
